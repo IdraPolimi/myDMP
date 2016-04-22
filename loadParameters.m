@@ -6,3 +6,4 @@ tau = 1; %deafult gain term for the speed of the action; > 1 --> speed up moveme
 alphaY = 25; %gain term for trajectory acceleration *DO NOT CHANGE
 betaY = alphaY/4; %gain term for trajectory acceleration (set equal alphaY/4 for critical dampening) *DO NOT CHANGE
 basisNumber = 15; %number of basis functions
+gdl = 1; %number of degrees of freedom
