@@ -1,9 +1,19 @@
+%each row of ytg,dytg and ddytg is a gld!
+
+%updating number of gdl
+gdl = 2;
+
 T = timeScale/(tau*dt);
-for ii=1:T
-    ytg(ii) = (exp(ii/1000)+sin(pi*ii/1000)+0.5)/10;
+for jj = 1:gdl
+    for ii=1:T
+        ytg(jj,ii) = (exp(ii/1000)+sin(jj*pi*ii/1000)+0.5)/10;
+    end
+    dytgTemp =diff(ytg(jj,:))/dt;
+    ddytgTemp =diff(dytgTemp)/dt;
+    dytg(jj,:) = [dytgTemp(1) dytgTemp];
+    ddytg(jj,:) = [ddytgTemp(1) ddytgTemp(1) ddytgTemp];
 end
-dytg =diff(ytg)/dt;
-ddytg =diff(dytg)/dt;
-dytg = [dytg(1) dytg];
-ddytg = [ddytg(1) ddytg(1) ddytg];
+clear dytgTemp
+clear ddytgTemp
+clear jj
 clear ii

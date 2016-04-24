@@ -1,5 +1,4 @@
 close all
-
 clear y
 clear dy
 clear ddy
@@ -12,28 +11,34 @@ clear plotPSI
 %% overriding params
 plotGraph = true;
 tau =1;
-goal = ytg(end);
-yInit = ytg(1);
-dyInit = dytg(1);
+goal = ytg(:,end);
+yInit = ytg(:,1);
+dyInit = dytg(:,1);
 
 %% computing centers and variance of gaussians
+x = ones(1,T);
+for ii = 2:T
+    x(ii) = canonicalSystem(x(ii-1),dt,alphaX,tau);
+end
 T = timeScale/(tau*dt);
-[c,rho] = regModelParam(T,tPercentage,basisNumber,dt,alphaX,tau);
+[c,rho,psiN] = regModelParam(x,T,tPercentage,basisNumber,alphaX);
 
 %% main loop
+
 x = 1;
 dy = dyInit;
 y = yInit;
 for ii = 1:T
-    psi = regModel(x,rho,c);
-    f(ii) = ((psi*w')/sum(psi))*x*(goal-yInit);% updating forcing term
-    [y, dy, ddy] = transformationSystem(alphaY, betaY, goal, dt, dy, y, f(ii), tau); %computing trajectory
-    if (plotGraph)
-        plotX(ii) = x;
-        plotPSI(ii,:) = psi;
-        plotY(ii) = y;
-        plotdY(ii) = dy;
-        plotddY(ii) = ddy;
+    psi = psiN(ii,:);
+    for jj = 1:gdl
+        f = ((psi*w(jj,:)')/sum(psi))*x*(goal(jj)-yInit(jj));% updating forcing term
+        [y(jj), dy(jj), ddy(jj)] = transformationSystem(alphaY, betaY, goal(jj), dt, dy(jj), y(jj), f, tau); %computing trajectory
+        if (plotGraph)
+            plotX(ii) = x;
+            plotY(jj,ii) = y(jj);
+            plotdY(jj,ii) = dy(jj);
+            plotddY(jj,ii) = ddy(jj);
+        end
     end
     x = canonicalSystem(x,dt,alphaX, tau);
 end
@@ -49,28 +54,32 @@ if(plotGraph)
     clf
     hold on
     for ii = 1:basisNumber
-        plot(plotPSI(:,ii));
+        plot(psiN(:,ii));
     end
     title('Basis functions');
     
-    figure(11)
-    clf
-    plot(plotY,'r')
-    hold on
-    plot(ytg,'k')
-    title('Output trajectory');
-    
-    figure(12)
-    clf
-    plot(plotdY,'r')
-    hold on
-    plot(dytg,'k')
-    title('Output Velocity');
-    
-    figure(13)
-    clf
-    plot(plotddY,'r')
-    hold on
-    plot(ddytg,'k')
-    title('Output Acceleration'); 
+    for jj = 1:gdl
+        graphName = jj*10;
+        figure(graphName)
+        clf
+        plot(plotY(jj,:),'r')
+        hold on
+        plot(ytg(jj,:),'k')
+        title('Output trajectory');
+        
+        figure(graphName+1)
+        clf
+        plot(plotdY(jj,:),'r')
+        hold on
+        plot(dytg(jj,:),'k')
+        title('Output Velocity');
+        
+        figure(graphName+2)
+        clf
+        plot(plotddY(jj,:),'r')
+        hold on
+        plot(ddytg(jj,:),'k')
+        title('Output Acceleration');
+        
+    end
 end

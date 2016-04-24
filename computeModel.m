@@ -13,9 +13,13 @@ for ii = 2:T
 end
 
 %% computing centers and variance of gaussians
-[c,rho] = regModelParam(x,T,tPercentage,basisNumber,alphaX);
+[~,~,psi] = regModelParam(x,T,tPercentage,basisNumber,alphaX);
 
 %% learning the demonstrated trajectory (computing the weights for each kernel)
-disp('Learning trajectory...');
-w = learnTrajectory(ytg, dytg, ddytg, alphaY, betaY, rho, c, dt, alphaX,tau);
-disp('Trajectory learned!');
+%each row of w corresponds to a gld
+w = zeros(gdl,basisNumber);
+for ii = 1:gdl
+    disp(['Learning trajectory for ', ii, 'gld...']);
+    w(ii,:) = learnTrajectory(ytg(ii,:), dytg(ii,:), ddytg(ii,:), alphaY, betaY, psi, x);
+    disp(['Trajectory learned for ', ii,'gld!']);
+end

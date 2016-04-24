@@ -1,4 +1,4 @@
-function [w] = learnTrajectory(ytg, dytg, ddytg, alphaY, betaY,rho,c,dt, alphaX,tau)
+function [w] = learnTrajectory(ytg, dytg, ddytg, alphaY, betaY,psi, x)
 % learnTrajectory: given a trajectory in terms of position, velocity and acceleration,
 % learns the weighted PSI
 
@@ -9,18 +9,17 @@ init = ytg(1);
 Ftarget = ddytg-alphaY*(betaY*(goal-ytg)-dytg);
 
 %% Computing weights
-x(1) = 1;
-for ii = 1:length(ytg)
-    psi(:,ii) = regModel(x(ii),rho,c);
-    s(ii) = x(ii)*(goal - init);
-    x(ii+1) = canonicalSystem(x(ii),dt,alphaX,tau);
+
+s = x.*(goal-init);
+psiTra = psi;
+psiDiag = full(sparse(1:numel(psiTra), repmat(1:size(psiTra,1),1,size(psiTra,2)), psiTra(:)));
+midMatrix = reshape(psiDiag', [1000,1000,15]);
+
+w = zeros(1,size(psi,2));
+for ii = 1:size(psi,2)
+    num = (s*midMatrix(:,:,ii)*Ftarget');
+    den = (s*midMatrix(:,:,ii)*s');
+    w(ii) = num/den;    
 end
 
-for ii = 1:length(c)
-    midMatrix = diag(psi(ii,:));
-    num = (s*midMatrix*Ftarget');
-    den = (s*midMatrix*s');
-    w(ii) = num/den;
-    
-end
 end
