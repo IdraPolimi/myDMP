@@ -12,28 +12,36 @@ clear plotPSI
 plotGraph = true;
 tau =1;
 goal = ytg(:,end);
+goalV = dytg(:,end);
+goal = 2;
+goalV = 2;
 yInit = ytg(:,1);
+yVInit = dytg(:,1);
 dyInit = dytg(:,1);
 
 %% computing centers and variance of gaussians
+T = timeScale/(tau*dt);
 x = ones(1,T);
 for ii = 2:T
     x(ii) = canonicalSystem(x(ii-1),dt,alphaX,tau);
 end
-T = timeScale/(tau*dt);
+
 [c,rho,psiN] = regModelParam(x,T,tPercentage,basisNumber,alphaX);
 
 %% main loop
-
+xEnd = x(end);
 x = 1;
 dy = dyInit;
 y = yInit;
 for ii = 1:T
     psi = psiN(ii,:);
     for jj = 1:gdl
+        %f = ((psi*w(jj,:)')/sum(psi))*x*(goal(jj)-yInit(jj)*(goalV(jj)-yVInit(jj)));% updating forcing term
         f = ((psi*w(jj,:)')/sum(psi))*x*(goal(jj)-yInit(jj));% updating forcing term
-        [y(jj), dy(jj), ddy(jj)] = transformationSystem(alphaY, betaY, goal(jj), dt, dy(jj), y(jj), f, tau); %computing trajectory
+        f = 0;
+        [y(jj), dy(jj), ddy(jj),tm] = transformationSystem(alphaY, betaY, goal(jj), goalV(jj), dt, dy(jj), y(jj), f, tau,x,xEnd, alphaX); %computing trajectory
         if (plotGraph)
+            plotTM(ii) = tm;
             plotX(ii) = x;
             plotY(jj,ii) = y(jj);
             plotdY(jj,ii) = dy(jj);
@@ -45,6 +53,11 @@ end
 
 %% plotting
 if(plotGraph)
+       figure(9)
+    clf
+    plot(plotTM)
+    title('TM');
+    
     figure(10)
     clf
     plot(plotX)

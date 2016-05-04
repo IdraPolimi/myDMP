@@ -1,7 +1,7 @@
 %each row of ytg,dytg and ddytg is a gld!
 
 %updating number of gdl
-gdl = 2;
+gdl = 1;
 
 T = timeScale/(tau*dt);
 for jj = 1:gdl
