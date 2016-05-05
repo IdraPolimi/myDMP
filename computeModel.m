@@ -20,6 +20,6 @@ end
 w = zeros(gdl,basisNumber);
 for ii = 1:gdl
     disp(['Learning trajectory for ', ii, 'gld...']);
-    w(ii,:) = learnTrajectory(ytg(ii,:), dytg(ii,:), ddytg(ii,:), alphaY, betaY, psi, x);
+    w(ii,:) = learnTrajectory(ytg(ii,:), dytg(ii,:), ddytg(ii,:), alphaY, betaY, psi, x, alphaX);
     disp(['Trajectory learned for ', ii,'gld!']);
 end

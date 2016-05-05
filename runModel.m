@@ -12,9 +12,7 @@ clear plotPSI
 plotGraph = true;
 tau =1;
 goal = ytg(:,end);
-goalV = dytg(:,end);
-goal = 2;
-goalV = 2;
+goalV = dytg(:,end)-0.5;
 yInit = ytg(:,1);
 yVInit = dytg(:,1);
 dyInit = dytg(:,1);
@@ -36,9 +34,7 @@ y = yInit;
 for ii = 1:T
     psi = psiN(ii,:);
     for jj = 1:gdl
-        %f = ((psi*w(jj,:)')/sum(psi))*x*(goal(jj)-yInit(jj)*(goalV(jj)-yVInit(jj)));% updating forcing term
         f = ((psi*w(jj,:)')/sum(psi))*x*(goal(jj)-yInit(jj));% updating forcing term
-        f = 0;
         [y(jj), dy(jj), ddy(jj),tm] = transformationSystem(alphaY, betaY, goal(jj), goalV(jj), dt, dy(jj), y(jj), f, tau,x,xEnd, alphaX); %computing trajectory
         if (plotGraph)
             plotTM(ii) = tm;

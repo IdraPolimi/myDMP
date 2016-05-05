@@ -1,16 +1,15 @@
-function [w] = learnTrajectory(ytg, dytg, ddytg, alphaY, betaY,psi, x)
+function [w] = learnTrajectory(ytg, dytg, ddytg, alphaY, betaY,psi, x,alphaX)
 % learnTrajectory: given a trajectory in terms of position, velocity and acceleration,
 % learns the weighted PSI
 
 goal = ytg(end);
 goalV = dytg(end);
 init = ytg(1);
-initV = dytg(1);
+%initV = dytg(1);
 
 %% Computing target function from target trajectory
-tm = (goal+goalV*log(x(end))) - goalV.*log(x);%
-Ftarget = ddytg -(1-x).*(alphaY*(betaY*(tm-ytg)+(goalV-dytg)));
-%Ftarget = ddytg -(1-x).*(alphaY*(betaY*(goal-ytg)+(goalV-dytg)));
+yta = (goal + goalV*log(x(end))/alphaX) -goalV.*log(x)/alphaX; %compute moving target
+Ftarget = ddytg -(1-x).*(alphaY*(betaY*(yta-ytg)+(goalV-dytg)));
 
 %% Computing weights
 %s = x.*(goal-init).*(goalV-initV);
