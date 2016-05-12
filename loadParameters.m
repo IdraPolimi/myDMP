@@ -7,3 +7,6 @@ alphaY = 10; %gain term for trajectory acceleration *DO NOT CHANGE
 betaY = alphaY/4; %gain term for trajectory acceleration (set equal alphaY/4 for critical dampening) *DO NOT CHANGE
 basisNumber = 9; %number of basis functions
 gdl = 1; %number of degrees of freedom
+alphaG = 3; %gain term for goal updating
+dgoal = 0; %initial speed for goal updating
+scale = 1; %scaling factor for dmp

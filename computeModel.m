@@ -23,4 +23,3 @@ for ii = 1:gdl
     w(ii,:) = learnTrajectory(ytg(ii,:), dytg(ii,:), ddytg(ii,:), alphaY, betaY, psi, x, alphaX);
     disp(['Trajectory learned for ', ii,'gld!']);
 end
-w
