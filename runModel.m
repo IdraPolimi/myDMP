@@ -27,32 +27,38 @@ end
 [c,rho,psiN] = regModelParam(x,T,tPercentage,basisNumber,alphaX);
 
 %% main loop
+xEnd = x(end);
 x = 1; %resetting phase variable for starting the movement
 dy = dyInit; 
 y = yInit;
 newGoal = goal;
+dgoal = 0; %
 
 for ii = 1:T
     psi = psiN(ii,:);
     for jj = 1:gdl
         f = ((psi*w(jj,:)')/sum(psi))*x*(goal(jj)-yInit(jj))*scale;% updating forcing term
-        [y(jj), dy(jj), ddy(jj),tm] = transformationSystem(alphaY, betaY, goal(jj), goalV(jj), dt, dy(jj), y(jj), f, tau,x,x(end), alphaX); %computing trajectory
+        [y(jj), dy(jj), ddy(jj),ta(jj)] = transformationSystem(alphaY, betaY, goal(jj), goalV(jj), dt, dy(jj), y(jj), f, tau,x,xEnd, alphaX); %computing trajectory
         [goal(jj),dgoal(jj)] = updateGoal(newGoal(jj),goal(jj),dgoal(jj), dt,alphaG);
         if (plotGraph)
-            plotTM(ii) = tm;
+            %plotTM(ii) = tm;
             plotX(ii) = x;
             plotY(jj,ii) = y(jj);
             plotdY(jj,ii) = dy(jj);
             plotddY(jj,ii) = ddy(jj);
             plotgoal(jj,ii) = goal(jj);
+            plotta(jj,ii) = ta(jj);
         end
     end
     % example of a change in goal while computing trajectory
-    if(ii == 500)
-        newGoal(jj) = newGoal(jj)*2;
+    if(ii == 800)
+        newGoal(jj) = 0.45;
+        
+        alphaG = alphaGmin+ (alphaGmax-alphaGmin)*(-log(x)/alphaX)
     end
     
     x = canonicalSystem(x,dt,alphaX, tau);
+    
 end
 
 %% plotting
@@ -98,6 +104,11 @@ if(plotGraph)
        clf
        plot(plotgoal(jj,:))
        title('Goal');
+             
+         figure (graphName+4)
+       clf
+       plot(plotta(jj,:))
+       title('TA');
         
     end
 end

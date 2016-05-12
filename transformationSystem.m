@@ -4,7 +4,7 @@ function [y, dy, ddy,yta] = transformationSystem(alphaY, betaY, goal, goalV,dt,d
 % y'' = (1-x)*tauY*(alphaY*(betaY*(yta-y)+(goalV-y'));
 
 yta = (goal + goalV*log(xEnd)/alphaX) -goalV.*log(x)/alphaX; %compute moving target
-ddy = (1-x)*tau*(alphaY*(betaY*(yta-y)+(goalV-dy)))+tau*fi; 
+ddy = ((1-x)^2)*tau*(alphaY*(betaY*(yta-y)+(goalV-dy)))+tau*fi; 
 y = (dt*dy*tau)+y;
 dy = (dt*ddy*tau)+dy;
 
