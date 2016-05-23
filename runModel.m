@@ -33,11 +33,12 @@ dy = dyInit;
 y = yInit;
 newGoal = goal;
 dgoal = 0; %
-
+scale
 for ii = 1:T
     psi = psiN(ii,:);
     for jj = 1:gdl
         f = ((psi*w(jj,:)')/sum(psi))*x*(goal(jj)-yInit(jj))*scale;% updating forcing term
+        %f = ((psi*w(jj,:)')/sum(psi))*x*scale;% updating forcing term
         [y(jj), dy(jj), ddy(jj),ta(jj)] = transformationSystem(alphaY, betaY, goal(jj), goalV(jj), dt, dy(jj), y(jj), f, tau,x,xEnd, alphaX); %computing trajectory
         [goal(jj),dgoal(jj)] = updateGoal(newGoal(jj),goal(jj),dgoal(jj), dt,alphaG);
         if (plotGraph)
@@ -51,11 +52,11 @@ for ii = 1:T
         end
     end
     % example of a change in goal while computing trajectory
-    if(ii == 800)
-        newGoal(jj) = 0.45;
+   % if(ii == 800)
+    %    newGoal(jj) = 0.45;
         
-        alphaG = alphaGmin+ (alphaGmax-alphaGmin)*(-log(x)/alphaX)
-    end
+    %    alphaG = alphaGmin+ (alphaGmax-alphaGmin)*(-log(x)/alphaX)
+    %end
     
     x = canonicalSystem(x,dt,alphaX, tau);
     

@@ -13,6 +13,7 @@ Ftarget = ddytg -((1-x).^2).*(alphaY*(betaY*(yta-ytg)+(goalV-dytg)));
 
 %% Computing weights
 s = x.*(goal-init);
+%s = x;
 psiTra = psi;
 psiDiag = full(sparse(1:numel(psiTra), repmat(1:size(psiTra,1),1,size(psiTra,2)), psiTra(:)));
 midMatrix = reshape(psiDiag', [1000,1000,size(psi,2)]);
