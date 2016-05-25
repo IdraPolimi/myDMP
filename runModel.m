@@ -12,10 +12,14 @@ clear plotPSI
 plotGraph = true;
 
 goal = ytg(:,end); %goal coordinates for each dof
+%goal = 2;
+%yInit = 0;
 yInit = ytg(:,1); % initial coordinates for each dof
 dyInit = dytg(:,1); % initial speed for each dof
+%goalV = 2;
+%dyInit = 0;
 goalV = dytg(:,end); % final speed of each dof 
-%tau = 1; %gain term for speed of movement;
+tau = 1; %gain term for speed of movement;
 
 %% computing centers and variance of gaussians
 T = timeScale/(tau*dt);
@@ -33,20 +37,22 @@ dy = dyInit;
 y = yInit;
 newGoal = goal;
 dgoal = 0; %
-scale
+
 for ii = 1:T
-    psi = psiN(ii,:);
+    psi = psiN(ii,:);   
     for jj = 1:gdl
-        f = ((psi*w(jj,:)')/sum(psi))*x*(goal(jj)-yInit(jj))*scale;% updating forcing term
-        %f = ((psi*w(jj,:)')/sum(psi))*x*scale;% updating forcing term
-        [y(jj), dy(jj), ddy(jj),ta(jj)] = transformationSystem(alphaY, betaY, goal(jj), goalV(jj), dt, dy(jj), y(jj), f, tau,x,xEnd, alphaX); %computing trajectory
+        %f = ((psi*w(jj,:)')/sum(psi))*x*(goal(jj)-yInit(jj))*scale;% updating forcing term
+       
+        f = ((psi*w(jj,:)')/sum(psi))*x*scale;% updating forcing term
+        [y(jj), dy(jj), ddy(jj),ta(jj),ddyT(jj)] = transformationSystem(alphaY, betaY, goal(jj), goalV(jj), dt, dy(jj), y(jj), f, tau,x,xEnd, alphaX); %computing trajectory
         [goal(jj),dgoal(jj)] = updateGoal(newGoal(jj),goal(jj),dgoal(jj), dt,alphaG);
         if (plotGraph)
-            %plotTM(ii) = tm;
+            plotf(ii) = f;
             plotX(ii) = x;
             plotY(jj,ii) = y(jj);
             plotdY(jj,ii) = dy(jj);
             plotddY(jj,ii) = ddy(jj);
+            plotddYT(jj,ii) = ddyT(jj);
             plotgoal(jj,ii) = goal(jj);
             plotta(jj,ii) = ta(jj);
         end
@@ -108,8 +114,11 @@ if(plotGraph)
              
          figure (graphName+4)
        clf
-       plot(plotta(jj,:))
-       title('TA');
+       plot(plotf(jj,:),'r')
+       title('f');
+       hold on
+       plot(plotddYT(jj,:),'g')
+       plot(plotf(jj,:)+plotddYT(jj,:),'g--')
         
     end
 end
