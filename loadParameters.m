@@ -12,3 +12,4 @@ alphaGmax = 7.5;  % max gain term for goal updating, do not exceed to avoid spik
 alphaG = alphaGmin;
 dgoal = 0; %initial speed for goal updating
 scale = 1; %scaling factor for dmp
+alphaE = 1; %gain term for error

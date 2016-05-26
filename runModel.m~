@@ -37,8 +37,8 @@ dy = dyInit;
 y = yInit;
 newGoal = goal;
 dgoal = 0; %
-error = 0;
-yNew = y;
+%e = 0;
+%ya = 0;
 for ii = 1:T
     %psi = psiN(ii,:);   
     psi(ii,:) = regModel(x,c,rho,basisNumber,1);
@@ -47,12 +47,11 @@ for ii = 1:T
         %f = ((psi*w(jj,:)')/sum(psi))*x*(goal(jj)-yInit(jj))*scale;% updating forcing term
        
         f = ((psi(ii,:)*w(jj,:)')/sum(psi(ii,:)))*x*scale;% updating forcing term
-        [y(jj), dy(jj), ddy(jj),ta(jj),ddyT(jj)] = transformationSystem(alphaY, betaY, goal(jj), goalV(jj), dt, dy(jj), y(jj), f, tau,x,xEnd, alphaX, error); %computing trajectory
+        [y(jj), dy(jj), ddy(jj),ta(jj),ddyT(jj)] = transformationSystem(alphaY, betaY, goal(jj), goalV(jj), dt, dy(jj), y(jj), f, tau,x,xEnd, alphaX, e); %computing trajectory
         [goal(jj),dgoal(jj)] = updateGoal(newGoal(jj),goal(jj),dgoal(jj), dt,alphaG);
-        [yNew, error] = dummyRobot(y(jj), yNew,ii);
         %ya = dummyRobot(y(jj),dy(jj),ddy(jj),ii,ya);
         %e = alphaE*abs(ya- y);
-        tau = 1/(1+100*error);
+        %tau = 1/(1+1000*e);
         if (plotGraph)
             plotf(ii) = f;
             plotX(ii) = x;
@@ -60,8 +59,8 @@ for ii = 1:T
             plotdY(jj,ii) = dy(jj);
             plotddY(jj,ii) = ddy(jj);
             plotddYT(jj,ii) = ddyT(jj);
-            plotYNEW(jj,ii) = yNew;
-            plotE(jj,ii) = error;
+            %plotYA(jj,ii) = ya;
+            plotE(jj,ii) = e;
         end
     end
     % example of a change in goal while computing trajectory
@@ -99,7 +98,7 @@ if(plotGraph)
         hold on
         plot(ytg(jj,:),'k')
         title('Output trajectory');
-        plot(plotYNEW(jj,:),'b--')
+        plot(plotYA(jj,:),'b--')
         
         figure(graphName+1)
         clf

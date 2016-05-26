@@ -13,7 +13,8 @@ for ii = 2:T
 end
 
 %% computing centers and variance of gaussians
-[~,~,psi] = regModelParam(x,T,tPercentage,basisNumber,alphaX);
+[c,rho] = regModelParam(x,T,tPercentage,basisNumber,alphaX);
+psi = regModel(x,c,rho,basisNumber,0);
 
 %% learning the demonstrated trajectory (computing the weights for each kernel)
 %each row of w corresponds to a gld
